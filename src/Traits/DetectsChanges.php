@@ -31,6 +31,7 @@ trait DetectsChanges
             $attributes = array_merge($attributes, $this->fillable);
         }
 
+
         if (isset(static::$logAttributes) && is_array(static::$logAttributes)) {
             if (in_array('*', static::$logAttributes)) {
                 $withoutWildcard = array_diff(static::$logAttributes, ['*']);

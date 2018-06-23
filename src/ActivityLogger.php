@@ -3,11 +3,12 @@
 namespace Spatie\Activitylog;
 
 use Illuminate\Auth\AuthManager;
-use Illuminate\Database\Eloquent\Model;
+use Jenssegers\Mongodb\Eloquent\Model;
 use Spatie\Activitylog\Models\Activity;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\Contracts\Config\Repository;
 use Spatie\Activitylog\Exceptions\CouldNotLogActivity;
+use App\Helpers\ActivityHelper;
 
 class ActivityLogger
 {
@@ -141,13 +142,23 @@ class ActivityLogger
             $activity->causer()->associate($this->causedBy);
         }
 
+        // $this->properties = [
+        //     'attributes'=>session('new'),
+        //     'old'=>session('old'),
+        // ];
+
         $activity->properties = $this->properties;
 
         $activity->description = $this->replacePlaceholders($description, $activity);
 
         $activity->log_name = $this->logName;
 
+        $activity->sync = false;
+        $activity->sync_date = false;
+
         $activity->save();
+
+        ActivityHelper::syncActivity();
 
         return $activity;
     }
